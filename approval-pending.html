@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Request received – waiting for approval</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background: #f4f6f8;
+      color: #1f2933;
+    }
+    main {
+      max-width: 40rem;
+      margin: 4rem auto;
+      padding: 2rem 2.5rem;
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.12);
+    }
+    h1 { font-size: 1.5rem; margin-top: 0; }
+    p, li { line-height: 1.5; }
+    .app-name { font-weight: 600; }
+    .return-link {
+      display: inline-block;
+      margin-top: 0.5rem;
+      padding: 0.6rem 1.1rem;
+      background: #1d4ed8;
+      color: #fff;
+      border-radius: 4px;
+      text-decoration: none;
+    }
+    .return-link:hover { background: #1e40af; }
+    footer { margin-top: 2rem; font-size: 0.9rem; color: #52606d; }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Your request has been received</h1>
+
+    <p>
+      Your request for access to <span class="app-name" id="app-name">this application</span>
+      is waiting for approval.
+    </p>
+
+    <h2>What happens next</h2>
+    <ol>
+      <li>An approver will review your request.</li>
+      <li>You'll get an email at the address on your account when it's approved or denied.</li>
+      <li>Once approved, return to the application and sign in again.</li>
+    </ol>
+
+    <p>You can close this window now.</p>
+
+    <p id="return-block" hidden>
+      Already received your approval email?<br>
+      <a class="return-link" id="return-link" href="#">Go to <span id="return-app-name">the application</span></a>
+    </p>
+
+    <footer>
+      Questions? Contact <a href="mailto:SUPPORT_EMAIL">SUPPORT_EMAIL</a>.
+    </footer>
+  </main>
+
+  <script>
+    // Optional query parameters, set per enrollment flow in its Submission Redirect URL:
+    //   app    - display name of the application
+    //   return - https URL of the application, shown as a link
+    (function () {
+      var params = new URLSearchParams(window.location.search);
+
+      var app = params.get('app');
+      if (app) {
+        document.getElementById('app-name').textContent = app;
+        document.getElementById('return-app-name').textContent = app;
+      }
+
+      var ret = params.get('return');
+      if (ret) {
+        try {
+          var url = new URL(ret);
+          if (url.protocol === 'https:') {
+            document.getElementById('return-link').href = url.href;
+            document.getElementById('return-block').hidden = false;
+          }
+        } catch (e) {
+          // Ignore malformed return URLs.
+        }
+      }
+    })();
+  </script>
+</body>
+</html>
