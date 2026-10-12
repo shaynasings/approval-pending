@@ -37,21 +37,43 @@
 </head>
 <body>
   <main>
-    <h1>Your request has been received</h1>
+    <section id="pending-message">
+      <h1>Your request has been received</h1>
 
-    <p>
-      Your request for access to <span class="app-name" id="app-name">this application</span>
-      is waiting for approval.
-    </p>
+      <p>
+        Your request for access to <span class="app-name" id="app-name">this application</span>
+        is waiting for approval.
+      </p>
 
-    <h2>What happens next</h2>
-    <ol>
-      <li>An approver will review your request.</li>
-      <li>You'll get an email at the address on your account when it's approved or denied.</li>
-      <li>Once approved, return to the application and sign in again.</li>
-    </ol>
+      <h2>What happens next</h2>
+      <ol>
+        <li>An approver will review your request.</li>
+        <li>You'll get an email at the address on your account when it's approved or denied.</li>
+        <li>Once approved, return to the application and sign in again.</li>
+      </ol>
 
-    <p>You can close this window now.</p>
+      <p>You can close this window now.</p>
+    </section>
+
+    <section id="existing-message" hidden>
+      <h1>We already have a registration for this login</h1>
+
+      <p>The account you signed in with has already been used to register.</p>
+
+      <ul>
+        <li>
+          <strong>If you signed up recently</strong>, your request is waiting for approval.
+          You'll get an email when it's approved or denied. Once approved, return to the
+          application and sign in again.
+        </li>
+        <li>
+          <strong>If your request was denied, or your access has ended</strong>, please contact
+          support below.
+        </li>
+      </ul>
+
+      <p>You can close this window now.</p>
+    </section>
 
     <p id="return-block" hidden>
       Already received your approval email?<br>
@@ -64,11 +86,19 @@
   </main>
 
   <script>
-    // Optional query parameters, set per enrollment flow in its Submission Redirect URL:
+    // Optional query parameters:
     //   app    - display name of the application
     //   return - https URL of the application, shown as a link
+    //   reason - "existing" when Registry found the login already registered
+    //            (EnvSource Redirect on Duplicate), which also covers denied
+    //            requests and lapsed members, not only pending ones
     (function () {
       var params = new URLSearchParams(window.location.search);
+
+      if (params.get('reason') === 'existing') {
+        document.getElementById('pending-message').hidden = true;
+        document.getElementById('existing-message').hidden = false;
+      }
 
       var app = params.get('app');
       if (app) {
