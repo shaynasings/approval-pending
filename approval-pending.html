@@ -75,6 +75,20 @@
       <p>You can close this window now.</p>
     </section>
 
+    <section id="inactive-message" hidden>
+      <h1>Your account is not active</h1>
+
+      <p>
+        Your status in the collaboration is not active, so you can't sign in to
+        <span class="app-name" id="inactive-app-name">this application</span> right now.
+      </p>
+
+      <p>
+        Please contact an administrator to have your status reviewed. You can reach
+        support using the address below.
+      </p>
+    </section>
+
     <p id="return-block" hidden>
       Already received your approval email?<br>
       <a class="return-link" id="return-link" href="#">Go to <span id="return-app-name">the application</span></a>
@@ -91,18 +105,25 @@
     //   return - https URL of the application, shown as a link
     //   reason - "existing" when Registry found the login already registered
     //            (EnvSource Redirect on Duplicate), which also covers denied
-    //            requests and lapsed members, not only pending ones
+    //            requests and lapsed members, not only pending ones;
+    //            "inactive" when the person is in the CO but not active
     (function () {
       var params = new URLSearchParams(window.location.search);
 
-      if (params.get('reason') === 'existing') {
+      var sections = {
+        existing: 'existing-message',
+        inactive: 'inactive-message'
+      };
+      var reason = params.get('reason');
+      if (sections.hasOwnProperty(reason)) {
         document.getElementById('pending-message').hidden = true;
-        document.getElementById('existing-message').hidden = false;
+        document.getElementById(sections[reason]).hidden = false;
       }
 
       var app = params.get('app');
       if (app) {
         document.getElementById('app-name').textContent = app;
+        document.getElementById('inactive-app-name').textContent = app;
         document.getElementById('return-app-name').textContent = app;
       }
 
